@@ -88,8 +88,24 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
-        return -1;
+        NumberTriangle current = this;
+        for (int i = 0; i < path.length(); i++) {
+            char c = path.charAt(i);
+            if (c == 'l') {
+                if (current.left == null) {
+                    throw new IllegalArgumentException("Path goes left from a leaf at index " + i);
+                }
+                current = current.left;
+            } else if (c == 'r') {
+                if (current.right == null) {
+                    throw new IllegalArgumentException("Path goes right from a leaf at index " + i);
+                }
+                current = current.right;
+            } else {
+                throw new IllegalArgumentException("Invalid path character: '" + c + "' at index " + i);
+            }
+        }
+        return current.root;
     }
 
     /** Read in the NumberTriangle structure from a file.
@@ -129,11 +145,10 @@ public class NumberTriangle {
                 top = currentRow[0]; // first row
             } else {
                 // link current row with previous row
-                for (int i = 0; i < currentRow.length - 1; i++) {
-                    NumberTriangle parentLeft = prevRow[i];
-                    NumberTriangle parentRight = prevRow[i + 1];
-                    parentLeft.setLeft(currentRow[i]);
-                    parentRight.setRight(currentRow[i + 1]);
+                for (int j = 0; j < prevRow.length; j++) {
+                    // each parent in the previous row has two children in the current row
+                    prevRow[j].setLeft(currentRow[j]);
+                    prevRow[j].setRight(currentRow[j + 1]);
                 }
             }
 
